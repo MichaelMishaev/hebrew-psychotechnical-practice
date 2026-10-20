@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#112f35">
+  <title>תרגון למבחן פסיכוטכני חשיבה מילולית חשיבה כמותית חשיבה אנולוגית</title>
+  <style>
+    :root { color-scheme: light; --ink:#183238; --muted:#587075; --line:#dbe5e4; --paper:#f7faf8; --white:#fff; --teal:#087f76; --teal-dark:#08665f; --mint:#e7f5ef; --coral:#b94838; --coral-bg:#fff0e9; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:var(--paper); color:var(--ink); font-family:Arial,"Noto Sans Hebrew",sans-serif; line-height:1.5; }
+    button { font:inherit; }
+    .shell { width:min(100% - 32px, 850px); margin:0 auto; padding:42px 0 64px; }
+    header { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; margin-bottom:32px; }
+    .brand { display:flex; align-items:center; gap:14px; }
+    .mark { display:grid; place-items:center; flex:none; width:50px; height:50px; border-radius:16px; background:#112f35; color:white; font-size:29px; font-weight:800; line-height:1; }
+    h1 { margin:0; font-size:clamp(24px,4vw,34px); letter-spacing:-.04em; line-height:1.2; }
+    .subtitle { margin:7px 0 0; color:var(--muted); font-size:15px; }
+    .count { padding:9px 14px; border:1px solid var(--line); border-radius:999px; background:#fff; color:var(--muted); font-size:14px; white-space:nowrap; }
+    .progress { height:8px; border-radius:999px; background:#dfe9e6; overflow:hidden; margin-bottom:28px; }
+    .progress > span { display:block; height:100%; width:0; border-radius:inherit; background:var(--teal); transition:width .35s ease; }
+    .card { background:#fff; border:1px solid #e3eae7; border-radius:28px; box-shadow:0 18px 45px rgba(20,55,51,.07); overflow:hidden; }
+    .card-body { padding:clamp(24px,5vw,44px); }
+    .kicker { display:flex; align-items:center; gap:10px; color:var(--teal-dark); font-size:14px; font-weight:700; }
+    .kicker::before { content:""; width:9px; height:9px; border-radius:50%; background:#39aa93; }
+    h2 { margin:17px 0 26px; font-size:clamp(23px,4vw,32px); line-height:1.45; letter-spacing:-.025em; font-weight:750; }
+    .options { display:grid; gap:12px; }
+    .option { width:100%; display:flex; align-items:center; gap:16px; text-align:right; padding:15px 17px; border:1.5px solid var(--line); border-radius:16px; background:#fff; color:var(--ink); cursor:pointer; transition:background .18s,border-color .18s,transform .18s; font-size:18px; min-height:62px; }
+    .option:hover:not(:disabled), .option:focus-visible { border-color:var(--teal); background:#f5fbf8; outline:none; transform:translateY(-1px); }
+    .option:disabled { cursor:default; }
+    .letter { display:grid; place-items:center; flex:none; width:32px; height:32px; border-radius:10px; background:#edf3f0; color:#45645f; font-size:15px; font-weight:700; }
+    .option.correct { border-color:#45a87e; background:var(--mint); }
+    .option.correct .letter { background:#278963; color:white; }
+    .option.wrong { border-color:#db8f7c; background:var(--coral-bg); }
+    .option.wrong .letter { background:var(--coral); color:#fff; }
+    .feedback { display:none; margin-top:24px; padding:18px 20px; border-radius:16px; background:var(--coral-bg); color:#813b31; }
+    .feedback.visible { display:block; }
+    .feedback strong { display:block; margin-bottom:3px; font-size:17px; }
+    .feedback p { margin:0; font-size:16px; }
+    .actions { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:24px; }
+    .hint { color:var(--muted); font-size:14px; }
+    .primary { border:0; background:var(--teal); color:#fff; padding:12px 22px; min-height:46px; border-radius:12px; font-weight:700; cursor:pointer; }
+    .primary:hover,.primary:focus-visible { background:var(--teal-dark); outline:3px solid #acd9ce; outline-offset:2px; }
+    .primary[hidden] { display:none; }
+    .result { display:none; text-align:center; padding:56px 30px 60px; }
+    .result.visible { display:block; }
+    .result-icon { display:grid; place-items:center; width:70px; height:70px; margin:0 auto 22px; border-radius:20px; color:#fff; background:var(--teal); font-size:34px; font-weight:bold; }
+    .result h2 { margin:0 0 8px; }
+    .score { color:var(--teal-dark); font-size:clamp(52px,9vw,86px); font-weight:800; line-height:1.2; letter-spacing:-.05em; }
+    .result p { color:var(--muted); font-size:17px; margin:10px auto 27px; max-width:480px; }
+    .mail-status { min-height:24px; margin:0 auto 12px!important; font-size:15px!important; }
+    .retry { display:block; margin:0 auto 18px; padding:8px 12px; border:0; background:none; color:var(--teal-dark); text-decoration:underline; cursor:pointer; }
+    .retry[hidden] { display:none; }
+    footer { color:#78908e; font-size:13px; text-align:center; margin-top:25px; }
+    @media (max-width:560px) { .shell { width:min(100% - 24px,850px); padding-top:20px; } header { flex-direction:column; align-items:flex-start; gap:16px; margin-bottom:24px; } .brand { gap:10px; } .mark { width:42px; height:42px; border-radius:12px; font-size:23px; } .subtitle { font-size:13px; } .count { font-size:12px; padding:7px 9px; } .card { border-radius:22px; } .card-body { padding:24px 18px; } .option { font-size:16px; min-height:58px; } .hint { font-size:12px; } }
+    @media (prefers-reduced-motion:reduce) { * { transition:none!important; scroll-behavior:auto!important; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="brand"><div class="mark" aria-hidden="true">✓</div><div><h1>תרגון למבחן פסיכוטכני חשיבה מילולית חשיבה כמותית חשיבה אנולוגית</h1><p class="subtitle">50 שאלות · בוחרים תשובה ומתקדמים בקצב שלכם</p></div></div>
+      <div class="count" id="count" aria-live="polite">שאלה 1 מתוך 50</div>
+    </header>
+    <div class="progress" role="progressbar" aria-label="התקדמות בתרגול" aria-valuemin="0" aria-valuemax="50" aria-valuenow="0"><span id="progressFill"></span></div>
+    <section class="card" aria-live="off">
+      <div class="card-body" id="quiz">
+        <div class="kicker" id="category"></div>
+        <h2 id="prompt"></h2>
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback" role="status" aria-live="polite"><strong id="feedbackTitle"></strong><p id="feedbackText"></p></div>
+        <div class="actions"><span class="hint" id="hint">בחרו תשובה אחת</span><button class="primary" id="next" type="button" hidden>לשאלה הבאה</button></div>
+      </div>
+      <div class="result" id="result" aria-live="polite">
+        <div class="result-icon" aria-hidden="true">✓</div>
+        <h2>סיימתם את התרגול!</h2>
+        <div class="score" id="score"></div>
+        <p id="summary"></p>
+        <p class="mail-status" id="mailStatus" role="status" aria-live="polite"></p>
+        <button class="retry" id="retry" type="button" hidden>לנסות לשלוח שוב</button>
+        <button class="primary" id="restart" type="button">להתחיל מחדש</button>
+      </div>
+    </section>
+    <footer>תרגול מקורי בחשיבה מילולית, כמותית ואנלוגית · אינו מבחן רשמי</footer>
+  </main>
+  <script>
+    const questions = [{"category":"מילולי","prompt":"איזו מילה שונה במשמעותה משלוש האחרות?","options":["שמחה","אושר","עצב","עליזות"],"correct":2,"explanation":"שלוש המילים האחרות מבטאות שמחה."},{"category":"כמותי","prompt":"השלימו את המספר הבא בסדרה: 6, 11, 16, 21, ___","options":["25","26","27","31"],"correct":1,"explanation":"מוסיפים 5 בכל פעם."},{"category":"קשר בין מילים","prompt":"כפפה : יד — איזה זוג מתאים לאותו קשר?","options":["כובע : ראש","נעל : שרוך","חולצה : ארון","אצבע : טבעת"],"correct":0,"explanation":"כפפה מכסה את היד, וכובע מכסה את הראש."},{"category":"מילולי","prompt":"כל חברי מועדון המדע משתתפים בניסוי. תמר חברה במועדון המדע. מה בטוח נכון?","options":["תמר מנהלת את הניסוי","תמר אוהבת כל מקצוע","תמר כבר סיימה את הניסוי","תמר משתתפת בניסוי"],"correct":3,"explanation":"תמר שייכת לקבוצה שכל חבריה משתתפים בניסוי."},{"category":"כמותי","prompt":"חמש מחברות עולות יחד 40 ש״ח. מחיר כל מחברת זהה. כמה יעלו שמונה מחברות?","options":["56 ש״ח","60 ש״ח","64 ש״ח","72 ש״ח"],"correct":2,"explanation":"מחברת עולה 8 ש״ח; שמונה מחברות עולות 64."},{"category":"קשר בין מילים","prompt":"מסור : ניסור — איזה זוג מתאים לאותו קשר?","options":["עץ : יער","מסרק : סירוק","מחברת : תיק","צבע : קיר"],"correct":1,"explanation":"כלי והפעולה שעושים בעזרתו."},{"category":"מילולי","prompt":"השלימו: _____ שחששה לדבר מול הכיתה, הציגה נועה את עבודתה.","options":["אף על פי","מפני","כדי","לכן"],"correct":0,"explanation":"יש ניגוד בין החשש לבין ההחלטה להציג."},{"category":"כמותי","prompt":"בקופסה יש 45 חרוזים. שליש מהם ירוקים. כמה חרוזים ירוקים יש בקופסה?","options":["9","12","30","15"],"correct":3,"explanation":"מחלקים 45 ב־3."},{"category":"קשר בין מילים","prompt":"שורש : עץ — איזה זוג מתאים לאותו קשר?","options":["גינה : פרח","פרי : סל","יסוד : בניין","חלון : זכוכית"],"correct":2,"explanation":"שורש מעגן עץ בקרקע, ויסוד מעגן בניין."},{"category":"מילולי","prompt":"עדי הגיעה לפני ברק. ברק הגיע לפני גל. מי הגיע אחרון מבין שלושתם?","options":["עדי","גל","ברק","אי אפשר לדעת ---"],"correct":1,"explanation":"הסדר הוא עדי, ברק, גל."},{"category":"כמותי","prompt":"השלימו את המספר הבא בסדרה: 3, 6, 12, 24, ___","options":["48","36","42","30"],"correct":0,"explanation":"מכפילים ב־2 בכל פעם."},{"category":"קשר בין מילים","prompt":"שאלה : תשובה — איזה זוג מתאים לאותו קשר?","options":["ספר : עמוד","שיעור : הפסקה","תלמיד : כיתה","חידה : פתרון"],"correct":3,"explanation":"תשובה עונה על שאלה, ופתרון פותר חידה."},{"category":"מילולי","prompt":"מה משמעות הביטוי „יד ביד” במשפט: „שני הצוותים עבדו יד ביד”?","options":["עבדו בלי לדבר","עבדו בשעות שונות","עבדו בשיתוף פעולה","עבדו בתחרות"],"correct":2,"explanation":"הביטוי מתאר שיתוף פעולה."},{"category":"כמותי","prompt":"תיק עולה 200 ש״ח. ניתנה עליו הנחה של 15%. כמה משלמים לאחר ההנחה?","options":["185 ש״ח","170 ש״ח","150 ש״ח","175 ש״ח"],"correct":1,"explanation":"15% מ־200 הם 30; מפחיתים 30 מהמחיר."},{"category":"קשר בין מילים","prompt":"אדריכל : תכנון — איזה זוג מתאים לאותו קשר?","options":["מתרגם : תרגום","חולה : טיפול","ספר : קריאה","קהל : הופעה"],"correct":0,"explanation":"בעל מקצוע והפעולה המקצועית שלו."},{"category":"מילולי","prompt":"אין להיכנס למעבדה בלי משקפי מגן. לעומר אין משקפי מגן. מה עליו לעשות לפי הכלל?","options":["להיכנס אם הוא נזהר","להיכנס רק לחמש דקות","להיכנס עם חבר","לא להיכנס עד שיהיו לו משקפי מגן"],"correct":3,"explanation":"לפי הכלל, משקפי מגן הם תנאי לכניסה."},{"category":"כמותי","prompt":"למלבן אורך של 9 ס״מ ורוחב של 4 ס״מ. מה היקפו?","options":["13 ס״מ","36 ס״מ","26 ס״מ","18 ס״מ"],"correct":2,"explanation":"מחברים את ארבע הצלעות: 9 + 4 + 9 + 4."},{"category":"קשר בין מילים","prompt":"מחוספס : חלק — איזה זוג מתאים לאותו קשר?","options":["קר : קפוא","צפוף : מרווח","רחב : ענק","שקט : רגוע"],"correct":1,"explanation":"שני הזוגות מציגים תכונות מנוגדות."},{"category":"מילולי","prompt":"בחרו מילה שמתחילה באות מ׳, מסתיימת באות ה׳ ויש בה בדיוק ארבע אותיות.","options":["מפה","מחברת","מנורה","מתנה"],"correct":3,"explanation":"מ־ת־נ־ה: ארבע אותיות, מתחילה במ׳ ומסתיימת בה׳."},{"category":"כמותי","prompt":"הממוצע של שלושה מספרים הוא 12. שניים מהמספרים הם 8 ו־13. מה המספר השלישי?","options":["15","14","16","17 ---"],"correct":0,"explanation":"סכום המספרים הוא 36; מפחיתים 8 ו־13."},{"category":"קשר בין מילים","prompt":"דבורה : כוורת — איזה זוג מתאים לאותו קשר?","options":["דג : קשקשת","ציפור : כנף","נמלה : קן","סוס : עשב"],"correct":2,"explanation":"בעל חיים ומקום מגורי המושבה שלו."},{"category":"מילולי","prompt":"דניאל החזיר את הספר בזמן, אך שכח להביא את המחברת. מה נכון?","options":["דניאל שכח את הספר","דניאל החזיר את הספר ולא הביא את המחברת","דניאל הביא את המחברת ולא החזיר את הספר","דניאל איחר בהחזרת הספר"],"correct":1,"explanation":"זו בדיוק המשמעות של המשפט."},{"category":"כמותי","prompt":"היחס בין מספר הכדורים האדומים לכחולים הוא 3 ל־2. יש בסך הכול 30 כדורים. כמה כדורים אדומים יש?","options":["10","12","15","18"],"correct":3,"explanation":"5 חלקים שווים בסך הכול; כל חלק הוא 6, והאדומים הם 3 חלקים."},{"category":"קשר בין מילים","prompt":"זרע : נביטה — איזה זוג מתאים לאותו קשר?","options":["ביצה : בקיעה","עלה : ענף","פרי : קטיף","פרח : אגרטל"],"correct":0,"explanation":"נביטה היא תחילת התפתחות הצמח מהזרע; בקיעה היא יציאה מהביצה."},{"category":"מילולי","prompt":"מה פירוש המילה „הסס”?","options":["החליט מיד","התרגז מאוד","התקשה להחליט","שכח הכול"],"correct":2,"explanation":"מי שמהסס אינו מחליט מיד."},{"category":"כמותי","prompt":"אימון מתחיל בשעה 16:35 ונמשך 50 דקות. מתי הוא מסתיים?","options":["17:15","17:25","17:35","16:85"],"correct":1,"explanation":"25 דקות עד 17:00 ועוד 25 דקות."},{"category":"קשר בין מילים","prompt":"מספריים : גזירה — איזה זוג מתאים לאותו קשר?","options":["גשם : ענן","דלת : כניסה","עיפרון : מחק","מחט : תפירה"],"correct":3,"explanation":"כלי והפעולה שעושים בעזרתו."},{"category":"מילולי","prompt":"כל משתתפי הסיור הביאו מים. חלק מהמשתתפים הביאו גם כובע. מה בטוח נכון?","options":["כל מי שהביא כובע מבין משתתפי הסיור הביא גם מים","כל המשתתפים הביאו כובע","מי שהביא מים הביא גם כובע","אף משתתף לא הביא כובע"],"correct":0,"explanation":"כל משתתפי הסיור הביאו מים, כולל אלה שהביאו כובע."},{"category":"כמותי","prompt":"איזה מספר צריך להופיע במקום הריק? □ × 4 + 7 = 35","options":["6","8","7","9"],"correct":2,"explanation":"מפחיתים 7 מ־35 ומחלקים את 28 ב־4."},{"category":"קשר בין מילים","prompt":"צמא : שתייה — איזה זוג מתאים לאותו קשר?","options":["ספר : קריאה","עייפות : שינה","ריצה : מאמץ","אוכל : רעב ---"],"correct":1,"explanation":"שתייה נותנת מענה לצמא, ושינה נותנת מענה לעייפות."},{"category":"מילולי","prompt":"השלימו: ההסבר היה _____, ולכן התלמידים ביקשו מהמורה להסביר שוב.","options":["מפורט מאוד","ברור לכולם","מובן היטב","לא ברור"],"correct":3,"explanation":"חוסר בהירות מסביר מדוע ביקשו הסבר נוסף."},{"category":"כמותי","prompt":"השלימו את המספר הבא בסדרה: 2, 5, 10, 17, 26, ___","options":["37","35","36","39"],"correct":0,"explanation":"מוסיפים 3, 5, 7, 9, ולאחר מכן 11."},{"category":"קשר בין מילים","prompt":"דקה : שעה — איזה זוג מתאים לאותו קשר?","options":["שעון : מחוג","לילה : חושך","חודש : שנה","שבוע : יום"],"correct":2,"explanation":"יחידת זמן קטנה בתוך יחידת זמן גדולה יותר."},{"category":"מילולי","prompt":"בחצר נשתלו עצים חדשים כדי להוסיף צל. עד שיגדלו, הוצבו בחצר סככות זמניות. מדוע הוצבו הסככות?","options":["כדי למנוע מהעצים לגדול","כדי לספק צל עד שהעצים יגדלו","כדי להחליף את כל העצים לתמיד","כדי שלא יהיה אפשר לשחק בחצר"],"correct":1,"explanation":"הסככות מספקות צל באופן זמני."},{"category":"כמותי","prompt":"מכונה אורזת 6 קופסאות בכל דקה. כמה קופסאות תארוז ב־7 דקות, אם תעבוד באותו קצב?","options":["36","48","13","42"],"correct":3,"explanation":"6 קופסאות לדקה כפול 7 דקות."},{"category":"קשר בין מילים","prompt":"צייר : מכחול — איזה זוג מתאים לאותו קשר?","options":["צלם : מצלמה","זמר : קהל","נהג : כביש","סופר : סיפור"],"correct":0,"explanation":"בעל מקצוע וכלי המשמש אותו בעבודתו."},{"category":"מילולי","prompt":"ליה קראה יותר ספרים מניב, אך פחות ספרים משחר. מי קרא הכי הרבה ספרים?","options":["ליה","ניב","שחר","אי אפשר לדעת"],"correct":2,"explanation":"שחר קרא יותר מליה, וליה יותר מניב."},{"category":"כמותי","prompt":"קניתם שני עטים במחיר 7 ש״ח לכל עט, ומחברת במחיר 11 ש״ח. שילמתם בשטר של 50 ש״ח. כמה עודף תקבלו?","options":["18 ש״ח","25 ש״ח","32 ש״ח","39 ש״ח"],"correct":1,"explanation":"הקנייה עולה 25 ש״ח; מחסירים מ־50."},{"category":"קשר בין מילים","prompt":"ספרייה : ספרים — איזה זוג מתאים לאותו קשר?","options":["בית ספר : הפסקות","מטבח : ארוחות","מגרש : משחקים","מוזיאון : מוצגים"],"correct":3,"explanation":"מקום שמחזיק אוסף של הפריטים המצוינים."},{"category":"מילולי","prompt":"„לא כל תלמידי הכיתה משתתפים בחוג.” מה פירוש המשפט?","options":["לפחות תלמיד אחד בכיתה אינו משתתף בחוג","אף תלמיד בכיתה אינו משתתף בחוג","כל תלמידי הכיתה משתתפים בחוג","בדיוק תלמיד אחד משתתף בחוג ---"],"correct":0,"explanation":"„לא כל” פירושו שיש לפחות אחד שאינו משתתף."},{"category":"כמותי","prompt":"בשקית יש 5 כדורים אדומים, 3 כחולים ו־2 ירוקים. מוציאים כדור אחד בלי להסתכל. מה הסיכוי להוציא כדור כחול?","options":["3 מתוך 5","1 מתוך 3","3 מתוך 10","7 מתוך 10"],"correct":2,"explanation":"יש 3 כדורים כחולים מתוך 10 כדורים."},{"category":"קשר בין מילים","prompt":"קמח : לחם — איזה זוג מתאים לאותו קשר?","options":["סכין : סלט","חֵמָר : כד","תנור : עוגה","שולחן : עץ"],"correct":1,"explanation":"חומר גלם ומוצר שמכינים ממנו."},{"category":"מילולי","prompt":"איזו מילה קרובה ביותר במשמעות למילה „זעיר”?","options":["רחב","כבד","רחוק","קטנטן"],"correct":3,"explanation":"זעיר פירושו קטן מאוד."},{"category":"כמותי","prompt":"ליאור בן 13 ואחותו בת 9. בעוד כמה שנים יהיה סכום הגילים שלהם 32?","options":["5","4","10","6"],"correct":0,"explanation":"סכום הגילים כיום הוא 22, והוא גדל ב־2 בכל שנה."},{"category":"קשר בין מילים","prompt":"להקה : ציפורים — איזה זוג מתאים לאותו קשר?","options":["גן : עצים","קן : ביצים","עדר : כבשים","רועה : עיזים"],"correct":2,"explanation":"שם של קבוצה ובעלי החיים המרכיבים אותה."},{"category":"מילולי","prompt":"בחנות נמכרים רק מחברות, עטים וסרגלים. יעל קנתה בחנות פריט אחד שאינו מחברת ואינו עט. מה היא קנתה?","options":["ספר","סרגל","מחק","קלמר"],"correct":1,"explanation":"זו האפשרות היחידה שנשארה מבין המוצרים בחנות."},{"category":"כמותי","prompt":"בכיתה יש 28 תלמידים. היחס בין מספר הבנות למספר הבנים הוא 4 ל־3. כמה בנות בכיתה?","options":["12","14","18","16"],"correct":3,"explanation":"יש 7 חלקים שווים, בכל חלק 4 תלמידים; הבנות הן 4 חלקים."},{"category":"קשר בין מילים","prompt":"התנצלות : סליחה — איזה זוג מתאים לאותו קשר?","options":["שאלה : תשובה","תחרות : אימון","הליכה : נעליים","מתנה : אריזה"],"correct":0,"explanation":"התנצלות מבקשת סליחה, ושאלה מבקשת תשובה."},{"category":"מילולי","prompt":"אם יורד גשם, אימון הכדורגל מתקיים באולם. היום האימון התקיים במגרש ולא באולם. בהנחה שהכלל נשמר, מה אפשר להסיק?","options":["האולם היה מלא","המאמן איחר","לא ירד גשם בזמן האימון","האימון בוטל"],"correct":2,"explanation":"אילו ירד גשם בזמן האימון, האימון היה מתקיים באולם."},{"category":"כמותי","prompt":"בספר יש 120 עמודים. ביום הראשון קראה מיה רבע מהספר. ביום השני קראה שליש מהעמודים שנשארו. כמה עמודים נשארו לה לקרוא?","options":["50","60","70","80 ---"],"correct":1,"explanation":"ביום הראשון קראה 30 ונשארו 90; ביום השני קראה עוד 30."}];
+    const letters = ['א', 'ב', 'ג', 'ד'];
+    let index = 0;
+    let score = 0;
+    let wrongQuestions = [];
+    let runId = 0;
+    let answered = false;
+    let advanceTimer = null;
+    const $ = id => document.getElementById(id);
+
+    function render() {
+      if (index === questions.length) return showResult();
+      answered = false;
+      const q = questions[index];
+      $('count').textContent = `שאלה ${index + 1} מתוך ${questions.length}`;
+      document.querySelector('.progress').setAttribute('aria-valuenow', index);
+      $('progressFill').style.width = `${index / questions.length * 100}%`;
+      $('category').textContent = q.category;
+      $('prompt').textContent = q.prompt;
+      $('feedback').classList.remove('visible');
+      $('feedbackTitle').textContent = '';
+      $('feedbackText').textContent = '';
+      $('next').hidden = true;
+      $('next').textContent = index === questions.length - 1 ? 'לתוצאות' : 'לשאלה הבאה';
+      $('hint').textContent = 'בחרו תשובה אחת';
+      $('options').replaceChildren(...q.options.map((choice, i) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'option';
+        const letter = document.createElement('span');
+        letter.className = 'letter';
+        letter.textContent = letters[i];
+        const label = document.createElement('span');
+        label.textContent = choice;
+        button.append(letter, label);
+        button.addEventListener('click', () => answer(i));
+        return button;
+      }));
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    function answer(choice) {
+      if (answered) return;
+      answered = true;
+      const q = questions[index];
+      const buttons = [...$('options').children];
+      buttons.forEach(button => button.disabled = true);
+      buttons[q.correct].classList.add('correct');
+      if (choice === q.correct) {
+        score++;
+        $('hint').textContent = 'נכון! ממשיכים לשאלה הבאה…';
+        advanceTimer = setTimeout(nextQuestion, 1000);
+      } else {
+        wrongQuestions.push(index + 1);
+        buttons[choice].classList.add('wrong');
+        $('feedbackTitle').textContent = 'כמעט! הנה הדרך לחשוב על זה:';
+        $('feedbackText').textContent = q.explanation;
+        $('feedback').classList.add('visible');
+        $('hint').textContent = `התשובה הנכונה: ${letters[q.correct]} — ${q.options[q.correct]}`;
+        $('next').hidden = false;
+        $('next').focus();
+      }
+    }
+
+    function nextQuestion() { clearTimeout(advanceTimer); index++; render(); }
+    function showResult() {
+      $('quiz').hidden = true;
+      $('result').classList.add('visible');
+      $('count').textContent = 'התרגול הושלם';
+      $('progressFill').style.width = '100%';
+      document.querySelector('.progress').setAttribute('aria-valuenow', questions.length);
+      $('score').textContent = `${score} / ${questions.length}`;
+      $('summary').textContent = `עניתם נכון על ${score} מתוך ${questions.length} שאלות בניסיון הראשון. אפשר לנסות שוב ולשפר את התוצאה.`;
+      sendReport();
+      $('restart').focus();
+    }
+    async function sendReport() {
+      const thisRun = runId;
+      $('mailStatus').textContent = 'שולחים את התוצאה בדוא״ל…';
+      $('retry').hidden = true;
+      try {
+        const response = await fetch('https://formsubmit.co/ajax/345287@gmail.com', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+          body: JSON.stringify({
+            _subject: 'תוצאת תרגון למבחן פסיכוטכני חשיבה מילולית חשיבה כמותית חשיבה אנולוגית',
+            'תשובות נכונות': score,
+            'מספר שאלות': questions.length,
+            'אחוז הצלחה': `${Math.round(score / questions.length * 100)}%`,
+            'שאלות שנענו לא נכון': wrongQuestions.length ? wrongQuestions.join(', ') : 'אין',
+            'זמן סיום': new Date().toLocaleString('he-IL', {timeZone: 'Asia/Jerusalem'})
+          })
+        });
+        if (!response.ok || (await response.json()).success === false) throw new Error('Submission failed');
+        if (thisRun === runId) $('mailStatus').textContent = 'התוצאה נקלטה לשליחה בדוא״ל.';
+      } catch {
+        if (thisRun === runId) {
+          $('mailStatus').textContent = 'לא הצלחנו לשלוח את התוצאה. אפשר לנסות שוב.';
+          $('retry').hidden = false;
+        }
+      }
+    }
+    $('next').addEventListener('click', nextQuestion);
+    $('retry').addEventListener('click', sendReport);
+    $('restart').addEventListener('click', () => {
+      clearTimeout(advanceTimer); runId++; index = 0; score = 0; wrongQuestions = [];
+      $('result').classList.remove('visible'); $('quiz').hidden = false;
+      render(); $('options').querySelector('button').focus();
+    });
+    render();
+  </script>
+</body>
+</html>
