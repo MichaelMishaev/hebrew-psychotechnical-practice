@@ -177,7 +177,7 @@
             'זמן סיום': new Date().toLocaleString('he-IL', {timeZone: 'Asia/Jerusalem'})
           })
         });
-        if (!response.ok || (await response.json()).success === false) throw new Error('Submission failed');
+        if (!response.ok || ![true, 'true'].includes((await response.json()).success)) throw new Error('Submission failed');
         if (thisRun === runId) $('mailStatus').textContent = 'התוצאה נקלטה לשליחה בדוא״ל.';
       } catch {
         if (thisRun === runId) {
